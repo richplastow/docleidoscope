@@ -1,0 +1,29 @@
+{
+  "name": "docleidoscope",
+  "version": "0.0.1",
+  "description": "A randomized movie-clip viewer",
+  "main": "build/docleidoscope.js",
+  "scripts": {
+    "build": "node bin/akaybe-build",
+    "hi": "open .; open index.html; open test/run-test.html; subl .",
+    "index": "node_modules/apage/bin/apage -i README.md doc/*.md -o index.html -p \"`cat node_modules/apage/build/plugin/*.js`\"",
+    "test": "node test/run-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/richplastow/docleidoscope.git"
+  },
+  "keywords": [
+    "Random",
+    "Shuffle",
+    "Movie",
+    "Clip",
+    "MPEG"
+  ],
+  "author": "Rich Plastow <rich@richplastow.com> (http://richplastow.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/richplastow/docleidoscope/issues"
+  },
+  "homepage": "https://github.com/richplastow/docleidoscope#readme"
+}
