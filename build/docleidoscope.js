@@ -3,7 +3,9 @@
 /*! Docleidoscope 0.0.1 //// MIT Licence //// https://github.com/richplastow/docleidoscope#readme */
 
 (function() {
-  var Main, ª, ªA, ªB, ªC, ªE, ªF, ªN, ªO, ªR, ªS, ªU, ªV, ªX, ªex, ªhas, ªredefine, ªtype, ªuid;
+  var Client, Main, Runtime, Server, ª, ªA, ªB, ªC, ªE, ªF, ªN, ªO, ªR, ªS, ªU, ªV, ªX, ªex, ªhas, ªredefine, ªtype, ªuid,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   ªC = 'Docleidoscope';
 
@@ -85,17 +87,90 @@
     };
 
     function Main(config) {
-      if (config == null) {
-        config = {};
+      if (ªO !== ªtype(config)) {
+        throw new Error(this.C + ": `config` must be type 'object'");
       }
-      this.xx = 123;
+      this.env = config.env;
+      if (ªS !== ªtype(this.env)) {
+        throw new Error(this.C + ": `config.env` must be type 'string'");
+      }
+      if (!/^client|server$/.test(this.env)) {
+        throw new Error(this.C + ": `config.env` must be 'client' or 'server'");
+      }
+      this.runtime = new ('client' === this.env ? Client : Server)(config);
     }
 
-    Main.prototype.add = function(xx) {};
+    Main.prototype.init = function(xx) {};
 
     return Main;
 
   })();
+
+  Runtime = (function() {
+    Runtime.prototype.C = 'Runtime';
+
+    Runtime.prototype.toString = function() {
+      return "[object " + this.C + "]";
+    };
+
+    function Runtime(config) {
+      if (ªO !== ªtype(config)) {
+        throw new Error(this.C + ": `config` must be type 'object'");
+      }
+      this.xx = 'xx';
+    }
+
+    Runtime.prototype.init = function(xx) {};
+
+    return Runtime;
+
+  })();
+
+  Client = (function(superClass) {
+    extend(Client, superClass);
+
+    Client.prototype.C = 'Client';
+
+    function Client(config) {
+      Client.__super__.constructor.call(this, config);
+      this.env = config.env;
+      if (ªS !== ªtype(this.env)) {
+        throw new Error(this.C + ": `config.env` must be type 'string'");
+      }
+      if (!/^client$/.test(this.env)) {
+        throw new Error(this.C + ": `config.env` must be 'client'");
+      }
+      this.xx = 'xx';
+    }
+
+    Client.prototype.init = function(xx) {};
+
+    return Client;
+
+  })(Runtime);
+
+  Server = (function(superClass) {
+    extend(Server, superClass);
+
+    Server.prototype.C = 'Server';
+
+    function Server(config) {
+      Server.__super__.constructor.call(this, config);
+      this.env = config.env;
+      if (ªS !== ªtype(this.env)) {
+        throw new Error(this.C + ": `config.env` must be type 'string'");
+      }
+      if (!/^server$/.test(this.env)) {
+        throw new Error(this.C + ": `config.env` must be 'server'");
+      }
+      this.xx = 'xx';
+    }
+
+    Server.prototype.init = function(xx) {};
+
+    return Server;
+
+  })(Runtime);
 
   if (ªF === typeof define && define.amd) {
     define(function() {

@@ -1,9 +1,9 @@
-01 Docleidoscope Constructor Usage
-==================================
+03 Client Constructor Usage
+===========================
 
 
     tudor.add [
-      "01 Docleidoscope Constructor Usage"
+      "03 Client Constructor Usage"
       tudor.is
 
 
@@ -14,10 +14,10 @@
 
       "The class is a function"
       ªF
-      -> Main
+      -> Client
 
       "The instance is an object"
       ªO
-      -> new Main { env:'server' }
+      -> new Client { env:'client' }
 
     ]

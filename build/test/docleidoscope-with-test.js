@@ -3,7 +3,9 @@
 /*! Docleidoscope 0.0.1 //// MIT Licence //// https://github.com/richplastow/docleidoscope#readme */
 
 (function() {
-  var Main, Tudor, tudor, ª, ªA, ªB, ªC, ªE, ªF, ªN, ªO, ªR, ªS, ªU, ªV, ªX, ªex, ªhas, ªredefine, ªtype, ªuid,
+  var Client, Main, Runtime, Server, Tudor, tudor, ª, ªA, ªB, ªC, ªE, ªF, ªN, ªO, ªR, ªS, ªU, ªV, ªX, ªex, ªhas, ªredefine, ªtype, ªuid,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   ªC = 'Docleidoscope';
@@ -86,17 +88,90 @@
     };
 
     function Main(config) {
-      if (config == null) {
-        config = {};
+      if (ªO !== ªtype(config)) {
+        throw new Error(this.C + ": `config` must be type 'object'");
       }
-      this.xx = 123;
+      this.env = config.env;
+      if (ªS !== ªtype(this.env)) {
+        throw new Error(this.C + ": `config.env` must be type 'string'");
+      }
+      if (!/^client|server$/.test(this.env)) {
+        throw new Error(this.C + ": `config.env` must be 'client' or 'server'");
+      }
+      this.runtime = new ('client' === this.env ? Client : Server)(config);
     }
 
-    Main.prototype.add = function(xx) {};
+    Main.prototype.init = function(xx) {};
 
     return Main;
 
   })();
+
+  Runtime = (function() {
+    Runtime.prototype.C = 'Runtime';
+
+    Runtime.prototype.toString = function() {
+      return "[object " + this.C + "]";
+    };
+
+    function Runtime(config) {
+      if (ªO !== ªtype(config)) {
+        throw new Error(this.C + ": `config` must be type 'object'");
+      }
+      this.xx = 'xx';
+    }
+
+    Runtime.prototype.init = function(xx) {};
+
+    return Runtime;
+
+  })();
+
+  Client = (function(superClass) {
+    extend(Client, superClass);
+
+    Client.prototype.C = 'Client';
+
+    function Client(config) {
+      Client.__super__.constructor.call(this, config);
+      this.env = config.env;
+      if (ªS !== ªtype(this.env)) {
+        throw new Error(this.C + ": `config.env` must be type 'string'");
+      }
+      if (!/^client$/.test(this.env)) {
+        throw new Error(this.C + ": `config.env` must be 'client'");
+      }
+      this.xx = 'xx';
+    }
+
+    Client.prototype.init = function(xx) {};
+
+    return Client;
+
+  })(Runtime);
+
+  Server = (function(superClass) {
+    extend(Server, superClass);
+
+    Server.prototype.C = 'Server';
+
+    function Server(config) {
+      Server.__super__.constructor.call(this, config);
+      this.env = config.env;
+      if (ªS !== ªtype(this.env)) {
+        throw new Error(this.C + ": `config.env` must be type 'string'");
+      }
+      if (!/^server$/.test(this.env)) {
+        throw new Error(this.C + ": `config.env` must be 'server'");
+      }
+      this.xx = 'xx';
+    }
+
+    Server.prototype.init = function(xx) {};
+
+    return Server;
+
+  })(Runtime);
 
   if (ªF === typeof define && define.amd) {
     define(function() {
@@ -427,6 +502,84 @@
   tudor.add([
     "01 Docleidoscope Constructor Usage", tudor.is, "The class and instance are expected types", "The class is a function", ªF, function() {
       return Main;
+    }, "The instance is an object", ªO, function() {
+      return new Main({
+        env: 'server'
+      });
+    }
+  ]);
+
+  tudor.add([
+    "02 Docleidoscope Constructor Errors", tudor["throw"], "`config` errors", "`config` missing", "Docleidoscope: `config` must be type 'object'", function() {
+      return new Main;
+    }, "`config` wrong type", "Docleidoscope: `config` must be type 'object'", function() {
+      return new Main([]);
+    }, "`config.env` errors", "`config.env` missing", "Docleidoscope: `config.env` must be type 'string'", function() {
+      return new Main({});
+    }, "`config.env` wrong type", "Docleidoscope: `config.env` must be type 'string'", function() {
+      return new Main({
+        env: 123
+      });
+    }, "`config.env` string not recognized", "Docleidoscope: `config.env` must be 'client' or 'server'", function() {
+      return new Main({
+        env: 'wrong'
+      });
+    }
+  ]);
+
+  tudor.add([
+    "03 Client Constructor Usage", tudor.is, "The class and instance are expected types", "The class is a function", ªF, function() {
+      return Client;
+    }, "The instance is an object", ªO, function() {
+      return new Client({
+        env: 'client'
+      });
+    }
+  ]);
+
+  tudor.add([
+    "04 Client Constructor Errors", tudor["throw"], "`config` errors", "`config` missing", "Client: `config` must be type 'object'", function() {
+      return new Client;
+    }, "`config` wrong type", "Client: `config` must be type 'object'", function() {
+      return new Client([]);
+    }, "`config.env` errors", "`config.env` missing", "Client: `config.env` must be type 'string'", function() {
+      return new Client({});
+    }, "`config.env` wrong type", "Client: `config.env` must be type 'string'", function() {
+      return new Client({
+        env: 123
+      });
+    }, "`config.env` string is 'server'", "Client: `config.env` must be 'client'", function() {
+      return new Client({
+        env: 'server'
+      });
+    }
+  ]);
+
+  tudor.add([
+    "03 Server Constructor Usage", tudor.is, "The class and instance are expected types", "The class is a function", ªF, function() {
+      return Server;
+    }, "The instance is an object", ªO, function() {
+      return new Server({
+        env: 'server'
+      });
+    }
+  ]);
+
+  tudor.add([
+    "04 Server Constructor Errors", tudor["throw"], "`config` errors", "`config` missing", "Server: `config` must be type 'object'", function() {
+      return new Server;
+    }, "`config` wrong type", "Server: `config` must be type 'object'", function() {
+      return new Server([]);
+    }, "`config.env` errors", "`config.env` missing", "Server: `config.env` must be type 'string'", function() {
+      return new Server({});
+    }, "`config.env` wrong type", "Server: `config.env` must be type 'string'", function() {
+      return new Server({
+        env: 123
+      });
+    }, "`config.env` string is 'client'", "Server: `config.env` must be 'server'", function() {
+      return new Server({
+        env: 'client'
+      });
     }
   ]);
 
