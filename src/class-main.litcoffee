@@ -40,6 +40,13 @@ Methods
 -------
 
 
+#### `stop()`
+Stop the server serving, or the client playing back media. 
+
+      stop: ->
+        @runtime.stop()
+
+
 #### `init()`
 - `xx <xx>`  Xx
 

@@ -1,6 +1,6 @@
 {
   "name": "docleidoscope",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A randomized movie-clip viewer",
   "main": "build/docleidoscope.js",
   "scripts": {
@@ -25,5 +25,6 @@
   "bugs": {
     "url": "https://github.com/richplastow/docleidoscope/issues"
   },
-  "homepage": "https://github.com/richplastow/docleidoscope#readme"
+  "homepage": "https://github.com/richplastow/docleidoscope#readme",
+  "dependencies": {}
 }

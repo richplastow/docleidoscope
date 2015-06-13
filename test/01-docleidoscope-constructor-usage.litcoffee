@@ -18,6 +18,6 @@
 
       "The instance is an object"
       ªO
-      -> new Main { env:'server' }
+      -> new Main { env:'client' }
 
     ]

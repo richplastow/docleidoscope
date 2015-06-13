@@ -3,7 +3,7 @@
 
 
     tudor.add [
-      "03 Server Constructor Usage"
+      "05 Server Constructor Usage"
       tudor.is
 
 
@@ -18,6 +18,17 @@
 
       "The instance is an object"
       ªO
-      -> new Server { env:'server' }
+      ->
+        server = new Server
+          env: 'server'
+          dir: 'path/to/watch'
+          delay: 1000
+          fs:
+            existsSync: -> true
+            readdirSync: -> []
+            statSync: ->
+              isDirectory: -> true
+        server.stop() # prevent directory-watcher loop from polling forever
+        server
 
     ]
