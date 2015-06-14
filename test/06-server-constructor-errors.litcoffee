@@ -49,6 +49,8 @@
       "Server: `config.dir` must be type 'string'"
       -> new Server
         env: 'server'
+        wss: ->
+          on: ->
         fs:  {}
 
       "`config.dir` wrong type"
@@ -56,6 +58,8 @@
       -> new Server
         env: 'server'
         dir: true
+        wss: ->
+          on: ->
         fs:  {}
 
       "`config.dir` is an empty string"
@@ -63,6 +67,8 @@
       -> new Server
         env: 'server'
         dir: ''
+        wss: ->
+          on: ->
         fs:  {}
 
       "`config.dir` string contains unexpected characters" #@todo will be less strict
@@ -70,6 +76,8 @@
       -> new Server
         env: 'server'
         dir: 'nöpe'
+        wss: ->
+          on: ->
         fs:  {}
 
 
@@ -78,6 +86,8 @@
       -> new Server
         env: 'server'
         dir: 'does/not/exist'
+        wss: ->
+          on: ->
         fs:
           existsSync: -> false
 
@@ -87,7 +97,9 @@
       -> new Server
         env: 'server'
         dir: 'is/not/a/dir'
-        delay: 1000
+        wait: 1000
+        wss: ->
+          on: ->
         fs:
           existsSync: -> true
           statSync: ->
@@ -104,6 +116,8 @@
       -> new Server
         env: 'server'
         dir: 'path/to/files'
+        wss: ->
+          on: ->
 
 
       "`config.fs` wrong type"
@@ -111,52 +125,83 @@
       -> new Server
         env: 'server'
         dir: 'path/to/files'
+        wss: ->
+          on: ->
         fs:  []
 
 
 
 
-      "`config.delay` errors"
+      "`config.wss` errors"
 
 
-      "`config.delay` missing"
-      "Server: `config.delay` must be type 'number'"
+      "`config.wss` missing"
+      "Server: `config.wss` must be type 'function'"
+      -> new Server
+        env: 'server'
+        dir: 'path/to/files'
+
+
+      "`config.wss` wrong type"
+      "Server: `config.wss` must be type 'function'"
+      -> new Server
+        env: 'server'
+        dir: 'path/to/files'
+        wss:
+          on: ->
+
+
+
+
+      "`config.wait` errors"
+
+
+      "`config.wait` missing"
+      "Server: `config.wait` must be type 'number'"
       -> new Server
         env: 'server'
         dir: 'is/a/dir'
+        wss: ->
+          on: ->
         fs:
           existsSync: -> true
           statSync: ->
             isDirectory: -> true
 
-      "`config.delay` wrong type"
-      "Server: `config.delay` must be type 'number'"
+      "`config.wait` wrong type"
+      "Server: `config.wait` must be type 'number'"
       -> new Server
         env: 'server'
         dir: 'is/a/dir'
-        delay: '1000'
+        wait: '1000'
+        wss: ->
+          on: ->
         fs:
           existsSync: -> true
           statSync: ->
             isDirectory: -> true
 
-      "`config.delay` too small"
-      "Server: `config.delay` must be 100-3600000"
+      "`config.wait` too small"
+      "Server: `config.wait` must be 100-3600000"
       -> new Server
         env: 'server'
         dir: 'is/a/dir'
-        delay: 99.99
+        wait: 99.99
+        wss: ->
+          on: ->
         fs:
           existsSync: -> true
           statSync: ->
             isDirectory: -> true
 
-      "`config.delay` too big"
-      "Server: `config.delay` must be 100-3600000"
+      "`config.wait` too big"
+      "Server: `config.wait` must be 100-3600000"
       -> new Server
         env: 'server'
         dir: 'is/a/dir'
-        delay: 1000 * 60 * 60 + 0.1
+        wait: 1000 * 60 * 60 + 0.1
+        wss: ->
+          on: ->
         fs:
           existsSync: -> true
           statSync: ->

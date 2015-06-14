@@ -3,12 +3,12 @@ Server
 
 #### A serverside runtime
 
-    class Server extends Runtime
+    class Server extends BaseRuntime
       C: 'Server'
 
       constructor: (config) ->
 
-Call `Runtime.constructor()`. 
+Call `BaseRuntime::constructor()`. 
 
         super config
 
@@ -26,6 +26,20 @@ The runtime environment, which must be set during instantiation.
           throw new Error "#{@C}: `config.env` must be type 'string'"
         if ! /^server$/.test @env
           throw new Error "#{@C}: `config.env` must be 'server'"
+
+
+#### `wss <xx>`  A function which provides a websocket server
+Xx. 
+
+        @wss = config.wss
+        if ªF != ªtype @wss
+          throw new Error "#{@C}: `config.wss` must be type 'function'"
+
+
+#### `wsServer <WebSocketServer|null>`  Xx
+`start()` must be called to begin serving. 
+
+        @wsServer = null
 
 
 #### `fs <fs>`  An object which provides filesystem access
@@ -49,14 +63,14 @@ Xx.
           throw new Error "#{@C}: `config.dir` does not exist"
 
 
-#### `delay <number>`  The time, in milliseconds, between directory-polling
+#### `wait <number>`  The time, in milliseconds, between directory-polling
 Xx. 
 
-        @delay = config.delay
-        if ªN != ªtype @delay
-          throw new Error "#{@C}: `config.delay` must be type 'number'"
-        if ! (100 <= @delay <= 1000 * 60 * 60)
-          throw new Error "#{@C}: `config.delay` must be 100-#{1000 * 60 * 60}"
+        @wait = config.wait
+        if ªN != ªtype @wait
+          throw new Error "#{@C}: `config.wait` must be type 'number'"
+        if ! (100 <= @wait <= 1000 * 60 * 60)
+          throw new Error "#{@C}: `config.wait` must be 100-#{1000 * 60 * 60}"
 
 
 
@@ -68,11 +82,11 @@ See https://nodejs.org/api/fs.html#fs_class_fs_stats.
           throw new Error "#{@C}: `config.dir` is not a directory"
 
 
-#### `watcher <intervalObject>`  Used by `stop()` to finish polling. 
-Begin polling for directory changes. 
+#### `watcher <intervalObject|null>`  Used by `stop()` to finish polling. 
+`start()` must be called to begin polling for directory changes. 
 https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_arg. 
 
-        @watcher = setInterval @checkDir, @delay
+        @watcher = null
 
 
 #### `files <Array>`  The current files in `@dir`
@@ -84,7 +98,7 @@ Xx.
 #### `xx <xx>`  Xx
 Xx. 
 
-        @xx = 'xx'
+        @xx = 'x'
 
 
 
@@ -112,10 +126,43 @@ Xx. @todo describe
 
 
 #### `stop()`
-Stop the server watching for directory changes and serving. 
+Start the server watching for directory changes, and responding to ws requests. 
+
+      start: ->
+
+Begin polling `@dir` for changes. 
+
+        @watcher = setInterval @checkDir, @wait
+
+Configure the websocket server. 
+
+        @wsServer = new @wss
+          port: 8080
+
+Begin responding to websocket requests. 
+
+        @wsServer.on 'connection', (ws) ->
+          ª 'connected'
+          ws.send 'thanks for connecting'
+          ws.on 'message', (message) ->
+            ª 'recieved', message
+            ws.send 'thanks for "' + message + '"'
+
+
+
+
+#### `stop()`
+Stop the server watching for directory changes, and responding to ws requests. 
 
       stop: ->
+
+Finsih polling `@dir` for changes. 
+
         clearInterval @watcher
+
+Disconnect all clients and stop responding to websocket requests. 
+
+        #@todo
 
 
 
@@ -142,7 +189,7 @@ Check for added files.
             added = true
             break
 
-Inform listeners about the change and record the new file list. @todo inform listeners
+Inform clients about the change, and record the new file list. @todo inform clients
 
         if removed || added
           ª "Files have changed"

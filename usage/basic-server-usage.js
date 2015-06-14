@@ -5,8 +5,9 @@ var Docleidoscope = require('../../docleidoscope');
 var docleidoscope = new Docleidoscope({
   env:    'server',
   dir:    'usage/movies/',
-  delay:  1000,
+  wait:   1000,
   fs:     require('fs'),
+  wss:    require('ws').Server,
 });
-console.log( docleidoscope.C ); // Docleidoscope
+docleidoscope.start();
 

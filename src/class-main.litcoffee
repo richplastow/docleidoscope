@@ -28,7 +28,7 @@ The runtime environment, which must be set during instantiation.
           throw new Error "#{@C}: `config.env` must be 'client' or 'server'"
 
 
-#### `runtime <Runtime>`  Instance of the Client or Server class
+#### `runtime <Client|Server>`  Instance of the Client or Server class
 The app runtime is instantiated differently, depending on the environment. 
 
         @runtime = new (if 'client' == @env then Client else Server) config
@@ -40,11 +40,22 @@ Methods
 -------
 
 
+#### `start()`
+Start the server serving, or the client playing back media. 
+
+      start: ->
+        @runtime.start()
+
+
+
+
 #### `stop()`
 Stop the server serving, or the client playing back media. 
 
       stop: ->
         @runtime.stop()
+
+
 
 
 #### `init()`

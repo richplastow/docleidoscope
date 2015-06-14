@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Docleidoscope browser</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+
+  <script src="../build/docleidoscope.js"></script>
+  <script>
+
+    //// Instantiate and start Docleidoscope. 
+    var docleidoscope = new Docleidoscope({
+      env: 'client'
+    });
+    docleidoscope.start();
+
+    ////@todo show WS logs in document. 
+    window.addEventListener("load", function() {
+      // ...
+    }, false);
+
+  </script>
+
+</head>
+<body>
+  <h4>Check the console...</h4>
+  <input type="button" onclick="docleidoscope.stop()" value="Stop">
+
+</body>
+</html>

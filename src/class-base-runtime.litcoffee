@@ -1,10 +1,10 @@
-Runtime
-=======
+BaseRuntime
+===========
 
 #### Parent class for Client and Server
 
-    class Runtime
-      C: 'Runtime'
+    class BaseRuntime
+      C: 'BaseRuntime'
       toString: -> "[object #{@C}]"
 
       constructor: (config) ->
