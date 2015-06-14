@@ -1,9 +1,9 @@
-06 Server Constructor Errors
-============================
+06 ServerRuntime Constructor Errors
+===================================
 
 
     tudor.add [
-      "06 Server Constructor Errors"
+      "06 ServerRuntime Constructor Errors"
       tudor.throw
 
 
@@ -13,13 +13,13 @@
 
 
       "`config` missing"
-      "Server: `config` must be type 'object'"
-      -> new Server
+      "ServerRuntime: `config` must be type 'object'"
+      -> new ServerRuntime
 
 
       "`config` wrong type"
-      "Server: `config` must be type 'object'"
-      -> new Server []
+      "ServerRuntime: `config` must be type 'object'"
+      -> new ServerRuntime []
 
 
 
@@ -28,16 +28,16 @@
 
 
       "`config.env` missing"
-      "Server: `config.env` must be type 'string'"
-      -> new Server {}
+      "ServerRuntime: `config.env` must be type 'string'"
+      -> new ServerRuntime {}
 
       "`config.env` wrong type"
-      "Server: `config.env` must be type 'string'"
-      -> new Server { env:123 }
+      "ServerRuntime: `config.env` must be type 'string'"
+      -> new ServerRuntime { env:123 }
 
       "`config.env` string is 'client'"
-      "Server: `config.env` must be 'server'"
-      -> new Server { env:'client' }
+      "ServerRuntime: `config.env` must be 'server'"
+      -> new ServerRuntime { env:'client' }
 
 
 
@@ -46,16 +46,16 @@
 
 
       "`config.dir` missing"
-      "Server: `config.dir` must be type 'string'"
-      -> new Server
+      "ServerRuntime: `config.dir` must be type 'string'"
+      -> new ServerRuntime
         env: 'server'
         wss: ->
           on: ->
         fs:  {}
 
       "`config.dir` wrong type"
-      "Server: `config.dir` must be type 'string'"
-      -> new Server
+      "ServerRuntime: `config.dir` must be type 'string'"
+      -> new ServerRuntime
         env: 'server'
         dir: true
         wss: ->
@@ -63,8 +63,8 @@
         fs:  {}
 
       "`config.dir` is an empty string"
-      "Server: `config.dir` fails /^[-\\\/_.A-Za-z0-9]{1,128}$/"
-      -> new Server
+      "ServerRuntime: `config.dir` fails /^[-\\\/_.A-Za-z0-9]{1,128}$/"
+      -> new ServerRuntime
         env: 'server'
         dir: ''
         wss: ->
@@ -72,8 +72,8 @@
         fs:  {}
 
       "`config.dir` string contains unexpected characters" #@todo will be less strict
-      "Server: `config.dir` fails /^[-\\\/_.A-Za-z0-9]{1,128}$/"
-      -> new Server
+      "ServerRuntime: `config.dir` fails /^[-\\\/_.A-Za-z0-9]{1,128}$/"
+      -> new ServerRuntime
         env: 'server'
         dir: 'nöpe'
         wss: ->
@@ -82,8 +82,8 @@
 
 
       "`config.dir` points to non-existant dir"
-      "Server: `config.dir` does not exist"
-      -> new Server
+      "ServerRuntime: `config.dir` does not exist"
+      -> new ServerRuntime
         env: 'server'
         dir: 'does/not/exist'
         wss: ->
@@ -93,8 +93,8 @@
 
 
       "`config.dir` points to a file, not a dir"
-      "Server: `config.dir` is not a directory"
-      -> new Server
+      "ServerRuntime: `config.dir` is not a directory"
+      -> new ServerRuntime
         env: 'server'
         dir: 'is/not/a/dir'
         wait: 1000
@@ -112,8 +112,8 @@
 
 
       "`config.fs` missing"
-      "Server: `config.fs` must be type 'object'"
-      -> new Server
+      "ServerRuntime: `config.fs` must be type 'object'"
+      -> new ServerRuntime
         env: 'server'
         dir: 'path/to/files'
         wss: ->
@@ -121,8 +121,8 @@
 
 
       "`config.fs` wrong type"
-      "Server: `config.fs` must be type 'object'"
-      -> new Server
+      "ServerRuntime: `config.fs` must be type 'object'"
+      -> new ServerRuntime
         env: 'server'
         dir: 'path/to/files'
         wss: ->
@@ -136,15 +136,15 @@
 
 
       "`config.wss` missing"
-      "Server: `config.wss` must be type 'function'"
-      -> new Server
+      "ServerRuntime: `config.wss` must be type 'function'"
+      -> new ServerRuntime
         env: 'server'
         dir: 'path/to/files'
 
 
       "`config.wss` wrong type"
-      "Server: `config.wss` must be type 'function'"
-      -> new Server
+      "ServerRuntime: `config.wss` must be type 'function'"
+      -> new ServerRuntime
         env: 'server'
         dir: 'path/to/files'
         wss:
@@ -157,8 +157,8 @@
 
 
       "`config.wait` missing"
-      "Server: `config.wait` must be type 'number'"
-      -> new Server
+      "ServerRuntime: `config.wait` must be type 'number'"
+      -> new ServerRuntime
         env: 'server'
         dir: 'is/a/dir'
         wss: ->
@@ -169,8 +169,8 @@
             isDirectory: -> true
 
       "`config.wait` wrong type"
-      "Server: `config.wait` must be type 'number'"
-      -> new Server
+      "ServerRuntime: `config.wait` must be type 'number'"
+      -> new ServerRuntime
         env: 'server'
         dir: 'is/a/dir'
         wait: '1000'
@@ -182,8 +182,8 @@
             isDirectory: -> true
 
       "`config.wait` too small"
-      "Server: `config.wait` must be 100-3600000"
-      -> new Server
+      "ServerRuntime: `config.wait` must be 100-3600000"
+      -> new ServerRuntime
         env: 'server'
         dir: 'is/a/dir'
         wait: 99.99
@@ -195,8 +195,8 @@
             isDirectory: -> true
 
       "`config.wait` too big"
-      "Server: `config.wait` must be 100-3600000"
-      -> new Server
+      "ServerRuntime: `config.wait` must be 100-3600000"
+      -> new ServerRuntime
         env: 'server'
         dir: 'is/a/dir'
         wait: 1000 * 60 * 60 + 0.1

@@ -1,7 +1,7 @@
 BaseRuntime
 ===========
 
-#### Parent class for Client and Server
+#### Parent class for ClientRuntime and ServerRuntime
 
     class BaseRuntime
       C: 'BaseRuntime'

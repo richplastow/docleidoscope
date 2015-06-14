@@ -1,10 +1,10 @@
-Client
-======
+ClientRuntime
+=============
 
 #### A clientside runtime
 
-    class Client extends BaseRuntime
-      C: 'Client'
+    class ClientRuntime extends BaseRuntime
+      C: 'ClientRuntime'
 
       constructor: (config) ->
 

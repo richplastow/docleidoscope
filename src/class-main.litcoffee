@@ -28,10 +28,13 @@ The runtime environment, which must be set during instantiation.
           throw new Error "#{@C}: `config.env` must be 'client' or 'server'"
 
 
-#### `runtime <Client|Server>`  Instance of the Client or Server class
+#### `runtime <ClientRuntime|ServerRuntime>`  Instance of the Runtime subclasses
 The app runtime is instantiated differently, depending on the environment. 
 
-        @runtime = new (if 'client' == @env then Client else Server) config
+        if 'client' == @env
+          @runtime = new ClientRuntime config
+        else
+          @runtime = new ServerRuntime config
 
 
 

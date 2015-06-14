@@ -1,10 +1,10 @@
-Server
-======
+ServerRuntime
+=============
 
 #### A serverside runtime
 
-    class Server extends BaseRuntime
-      C: 'Server'
+    class ServerRuntime extends BaseRuntime
+      C: 'ServerRuntime'
 
       constructor: (config) ->
 
@@ -93,6 +93,12 @@ https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_arg.
 Xx. 
 
         @files = @fs.readdirSync @dir
+
+
+#### `clients <Array>`  The currently connected websocket clients
+Xx. 
+
+        @clients = []
 
 
 #### `xx <xx>`  Xx

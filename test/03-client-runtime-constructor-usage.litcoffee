@@ -1,9 +1,9 @@
-03 Client Constructor Usage
-===========================
+03 ClientRuntime Constructor Usage
+==================================
 
 
     tudor.add [
-      "03 Client Constructor Usage"
+      "03 ClientRuntime Constructor Usage"
       tudor.is
 
 
@@ -14,10 +14,10 @@
 
       "The class is a function"
       ªF
-      -> Client
+      -> ClientRuntime
 
       "The instance is an object"
       ªO
-      -> new Client { env:'client' }
+      -> new ClientRuntime { env:'client' }
 
     ]

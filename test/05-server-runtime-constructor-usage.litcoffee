@@ -1,9 +1,9 @@
-05 Server Constructor Usage
-===========================
+05 ServerRuntime Constructor Usage
+==================================
 
 
     tudor.add [
-      "05 Server Constructor Usage"
+      "05 ServerRuntime Constructor Usage"
       tudor.is
 
 
@@ -14,12 +14,12 @@
 
       "The class is a function"
       ªF
-      -> Server
+      -> ServerRuntime
 
       "The instance is an object"
       ªO
       ->
-        server = new Server
+        server = new ServerRuntime
           env: 'server'
           dir: 'path/to/watch'
           wait: 1000
@@ -41,7 +41,7 @@
       "New file added after 300ms"
       '@todo async Tudor feature'
       ->
-        server = new Server
+        server = new ServerRuntime
           env: 'server'
           dir: 'path/to/watch'
           wait: 100
