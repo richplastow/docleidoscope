@@ -3,7 +3,7 @@
 /*! Docleidoscope 0.0.5 //// MIT Licence //// https://github.com/richplastow/docleidoscope#readme */
 
 (function() {
-  var BaseRuntime, ClientRuntime, Main, ServerRuntime, ª, ªA, ªB, ªC, ªE, ªF, ªN, ªO, ªR, ªS, ªU, ªV, ªX, ªex, ªhas, ªredefine, ªtype, ªuid,
+  var $, $$, BaseRuntime, ClientRuntime, Main, ServerRuntime, WsClient, document, ª, ªA, ªB, ªC, ªE, ªF, ªN, ªO, ªR, ªS, ªU, ªV, ªX, ªex, ªhas, ªredefine, ªtype, ªuid,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -115,26 +115,46 @@
         throw new Error(this.C + ": `config.env` must be 'client'");
       }
       this.wsc = null;
+      this.ID = null;
+      this.files = [];
+      this.listeners = {};
       this.xx = 'xx';
     }
 
     ClientRuntime.prototype.start = function() {
       this.wsc = new WebSocket('ws://127.0.0.1:8080');
-      this.wsc.onopen = (function(_this) {
-        return function(evt) {
-          ª('CONNECTED');
-          return _this.wsc.send('123 Testing');
-        };
-      })(this);
+      this.wsc.onopen = function(evt) {
+        return ª('CONNECTED');
+      };
       this.wsc.onclose = function(evt) {
+        this.ID = null;
         return ª('DISCONNECTED');
       };
-      this.wsc.onmessage = function(evt) {
-        return ª('RECEIVED: ' + evt.data);
-      };
-      return this.wsc.onerror = function(evt) {
+      this.wsc.onerror = function(evt) {
         return ª('ERROR: ', evt);
       };
+      return this.wsc.onmessage = (function(_this) {
+        return function(evt) {
+          var i, len, ref, updateListener;
+          if ('You are: ' === evt.data.slice(0, 9)) {
+            _this.ID = evt.data.slice(9);
+            ª('ASSIGNED ID: ' + _this.ID);
+            return _this.wsc.send('I am ' + _this.ID);
+          } else if ('Update files: ' === evt.data.slice(0, 14)) {
+            _this.files = JSON.parse(evt.data.slice(14));
+            if (_this.listeners.update) {
+              ref = _this.listeners.update;
+              for (i = 0, len = ref.length; i < len; i++) {
+                updateListener = ref[i];
+                updateListener();
+              }
+            }
+            return ª('UPDATE FILES: ', _this.files);
+          } else {
+            return ª('UNEXPECTED MESSAGE: ' + evt.data);
+          }
+        };
+      })(this);
     };
 
     ClientRuntime.prototype.stop = function() {
@@ -142,7 +162,14 @@
       return this.wsc = null;
     };
 
-    ClientRuntime.prototype.init = function(xx) {};
+    ClientRuntime.prototype.on = function(evt, cb) {
+      if (!this.listeners[evt]) {
+        this.listeners[evt] = [];
+      }
+      return this.listeners[evt].push(cb);
+    };
+
+    ClientRuntime.prototype.xx = function(xx) {};
 
     return ClientRuntime;
 
@@ -236,7 +263,7 @@
       }
       this.watcher = null;
       this.files = this.fs.readdirSync(this.dir);
-      this.clients = [];
+      this.wsClients = [];
       this.xx = 'x';
     }
 
@@ -247,14 +274,22 @@
       this.wsServer = new this.wss({
         port: 8080
       });
-      return this.wsServer.on('connection', function(ws) {
-        ª('connected');
-        ws.send('thanks for connecting');
-        return ws.on('message', function(message) {
-          ª('recieved', message);
-          return ws.send('thanks for "' + message + '"');
-        });
-      });
+      return this.wsServer.on('connection', (function(_this) {
+        return function(ws) {
+          var ID, wsClient;
+          wsClient = new WsClient;
+          ID = wsClient.ID;
+          wsClient.ws = ws;
+          _this.wsClients.push(wsClient);
+          ª('Connected to ' + ID + ' (' + _this.wsClients.length + ' in total)');
+          ws.send('You are: ' + ID);
+          wsClient.filesUpdate(_this.files);
+          return ws.on('message', function(message) {
+            ª('Received from ' + ID + ':\n  ' + message);
+            return ws.send('thanks for "' + message + '"');
+          });
+        };
+      })(this));
     };
 
     ServerRuntime.prototype.stop = function() {
@@ -262,7 +297,7 @@
     };
 
     ServerRuntime.prototype.checkDir = function() {
-      var added, file, fileNow, filesNow, i, j, len, len1, ref, removed;
+      var added, file, fileNow, filesNow, i, j, k, len, len1, len2, ref, ref1, removed, results, wsClient;
       filesNow = this.fs.readdirSync(this.dir);
       removed = false;
       ref = this.files;
@@ -282,8 +317,14 @@
         }
       }
       if (removed || added) {
-        ª("Files have changed");
-        return this.files = filesNow;
+        this.files = filesNow;
+        ref1 = this.wsClients;
+        results = [];
+        for (k = 0, len2 = ref1.length; k < len2; k++) {
+          wsClient = ref1[k];
+          results.push(wsClient.filesUpdate(this.files));
+        }
+        return results;
       }
     };
 
@@ -294,6 +335,50 @@
     return ServerRuntime;
 
   })(BaseRuntime);
+
+  WsClient = (function() {
+    WsClient.prototype.C = 'WsClient';
+
+    function WsClient(config) {
+      this.ID = ªuid(this.C);
+      this.allowed = {
+        mp4: true
+      };
+    }
+
+    WsClient.prototype.filesUpdate = function(files) {
+      var ext, file, i, len, ok;
+      ok = [];
+      for (i = 0, len = files.length; i < len; i++) {
+        file = files[i];
+        ext = file.split('.').pop().toLowerCase();
+        if (ext && this.allowed[ext]) {
+          ok.push(file);
+        }
+      }
+      return this.ws.send('Update files: ' + JSON.stringify(ok));
+    };
+
+    WsClient.prototype.init = function(xx) {};
+
+    return WsClient;
+
+  })();
+
+  if (!document) {
+    document = {
+      querySelector: {
+        bind: function() {}
+      },
+      querySelectorAll: {
+        bind: function() {}
+      }
+    };
+  }
+
+  $ = document.querySelector.bind(document);
+
+  $$ = document.querySelectorAll.bind(document);
 
   if (ªF === typeof define && define.amd) {
     define(function() {

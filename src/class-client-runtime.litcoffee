@@ -37,6 +37,27 @@ Xx.
 
 
 
+#### `I <string|null>`  Xx
+Assigned by the server when connected. 
+
+        @ID = null
+
+
+
+#### `files <array>`  Xx
+Xx. 
+
+        @files = []
+
+
+
+#### `listeners <object>`  Xx
+Xx. 
+
+        @listeners = {}
+
+
+
 #### `xx <xx>`  Xx
 Xx. 
 
@@ -55,18 +76,44 @@ Start the client playing back media, and connecting via websockets.
       start: ->
         # 
 
-Begin connecting via websockets. 
+Connecting to the server via websockets. 
 
         @wsc = new WebSocket 'ws://127.0.0.1:8080' #@todo polyfill
-        @wsc.onopen = (evt) => # note `=>` not `->`
+
+Listen for connection and disconection events. 
+
+        @wsc.onopen = (evt) ->
           ª 'CONNECTED'
-          @wsc.send '123 Testing'
         @wsc.onclose = (evt) ->
+          @ID = null
           ª 'DISCONNECTED'
-        @wsc.onmessage = (evt) ->
-          ª 'RECEIVED: ' + evt.data
+
+Listen for an error. 
+
         @wsc.onerror = (evt) ->
           ª 'ERROR: ', evt
+
+Listen for various types of message from the server. 
+
+- An ID-assign message @todo use the ID?
+- An files-update message
+- Any other message
+
+        @wsc.onmessage = (evt) => # note `=>` not `->`
+
+          if 'You are: ' == evt.data.slice 0, 9
+            @ID = evt.data.slice 9
+            ª 'ASSIGNED ID: ' + @ID
+            @wsc.send 'I am ' + @ID
+
+          else if 'Update files: ' == evt.data.slice 0, 14
+            @files = JSON.parse evt.data.slice 14
+            if @listeners.update
+              updateListener() for updateListener in @listeners.update
+            ª 'UPDATE FILES: ', @files
+
+          else
+            ª 'UNEXPECTED MESSAGE: ' + evt.data
 
 
 
@@ -85,10 +132,23 @@ Finish connecting via websockets.
 
 
 
-#### `init()`
+#### `on()`
+- `evt <string>`  Xx
+- `cb <function>`  Xx
+
+Xx. 
+
+      on: (evt, cb) ->
+        if ! @listeners[evt] then @listeners[evt] = []
+        @listeners[evt].push cb
+
+
+
+
+#### `xx()`
 - `xx <xx>`  Xx
 
-Xx. @todo describe
+Xx. 
 
-      init: (xx) ->
+      xx: (xx) ->
 

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Docleidoscope video viewer</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+
+  <style type="text/css">
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+    }
+    video {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+    }
+    #vid0 {
+      top: 0;
+      left: 0;
+      /* background-color: #111; */
+    }
+    #vid1 {
+      top: 0;
+      right: 0;
+      /* background-color: #222; */
+    }
+    #vid2 {
+      bottom: 0;
+      left: 0;
+      /* background-color: #222; */
+    }
+    #vid3 {
+      bottom: 0;
+      right: 0;
+      /* background-color: #111; */
+    }
+  </style>
+
+  <script src="../build/docleidoscope.js"></script>
+  <script>
+
+    (function () {
+
+      //// Instantiate and start Docleidoscope. 
+      var docleidoscope = new Docleidoscope({
+        env: 'client'
+      });
+      docleidoscope.start();
+
+      //// Xx. 
+      window.addEventListener('load', function() {
+
+        var
+
+          //// Iterator, length, filename, extension. 
+          i, l, file, fileI, ext, $vid
+
+          //// Very-mini-jQuery. 
+         ,$  = document.querySelector.bind(document)
+         ,$$ = document.querySelectorAll.bind(document)
+
+          //// Get references to the `<video>` elements. @todo allow dynamically added/removed?
+         ,$$vids = $$('video')
+
+         //// `fillVideos()` 
+         ,fillVideos = function () {
+
+            //// 
+            if (! docleidoscope.runtime.files.length) { return; }
+
+            //// Ensure all videos are playing. 
+            for (i=0, l=$$vids.length; i<l; i++) {
+              $vid = $$vids[i];
+              if (0 < $vid.currentTime && ! $vid.ended) { continue; } // playing
+
+              //// Choose a random video source. 
+              fileI = Math.floor( Math.random() * docleidoscope.runtime.files.length );
+              file = docleidoscope.runtime.files[fileI];
+
+              $vid.setAttribute('src', './movies/' + file);
+              $vid.play();
+              console.log($vid.id + ' playing ./movies/' + file);
+
+            }
+
+          }
+        ;
+
+        //// Initially load and start playing videos. 
+        fillVideos();
+        docleidoscope.runtime.on('update', fillVideos);
+
+        //// 
+        for (i=0, l=$$vids.length; i<l; i++) {
+          $vid = $$vids[i];
+          $vid.addEventListener('ended', fillVideos);
+        }
+
+
+      }, false);
+
+    })()
+  </script>
+
+</head>
+<body>
+  <video src="" id="vid0"></video>
+  <video src="" id="vid1"></video>
+  <video src="" id="vid2"></video>
+  <video src="" id="vid3"></video>
+  <!--<input type="button" onclick="docleidoscope.stop()" value="Stop">-->
+
+</body>
+</html>

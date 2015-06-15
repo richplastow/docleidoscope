@@ -95,10 +95,10 @@ Xx.
         @files = @fs.readdirSync @dir
 
 
-#### `clients <Array>`  The currently connected websocket clients
+#### `wsClients <Array>`  The currently connected websocket clients
 Xx. 
 
-        @clients = []
+        @wsClients = []
 
 
 #### `xx <xx>`  Xx
@@ -147,11 +147,31 @@ Configure the websocket server.
 
 Begin responding to websocket requests. 
 
-        @wsServer.on 'connection', (ws) ->
-          ª 'connected'
-          ws.send 'thanks for connecting'
+        @wsServer.on 'connection', (ws) => # note `=>` not `->`
+
+Create a `WsClient` instance to represent the newly connected client. 
+
+          wsClient = new WsClient
+          ID = wsClient.ID
+
+Provide the `WsClient` instance with access to the `send()` method, etc. 
+
+          wsClient.ws = ws
+
+Record the newly connected client in the `wsClients` array. 
+
+          @wsClients.push wsClient # nb, `@wsServer.clients` also tracks clients
+          ª 'Connected to ' + ID + ' (' + @wsClients.length + ' in total)'
+
+Tell the client its ID for future reference, and send the current file list. @todo do we need the ID?
+
+          ws.send 'You are: ' + ID
+          wsClient.filesUpdate @files
+
+Within this closure, create a new listener specifically for the new client. 
+
           ws.on 'message', (message) ->
-            ª 'recieved', message
+            ª 'Received from ' + ID + ':\n  ' + message
             ws.send 'thanks for "' + message + '"'
 
 
@@ -195,11 +215,11 @@ Check for added files.
             added = true
             break
 
-Inform clients about the change, and record the new file list. @todo inform clients
+Record the new file list, and inform clients about the change. 
 
         if removed || added
-          ª "Files have changed"
           @files = filesNow
+          wsClient.filesUpdate @files for wsClient in @wsClients
 
 
 
